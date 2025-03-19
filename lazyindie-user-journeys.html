@@ -1,0 +1,969 @@
+<style>
+/* Force background printing */
+html {
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+
+@media print {
+  body {
+    background-color: #1a1a1a !important;
+    color: #e0e0e0 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  h1, h2, h3, h4, h5 {
+    color: #fff !important;
+  }
+
+  pre {
+    background-color: #2d2d2d !important;
+  }
+
+  code {
+    color: #89ddff !important;
+  }
+
+  strong {
+    color: #89ddff !important;
+  }
+
+  .top-bar {
+    position: relative !important;
+    background-color: #141414 !important;
+  }
+}
+
+.top-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background-color: #141414;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.logo {
+  height: 30px;
+  width: auto;
+  object-fit: contain;
+  filter: brightness(1.2) contrast(1.1);
+}
+
+.logo:first-child {
+  height: 40px; /* LazyIndie logo slightly larger */
+  margin-right: 1rem;
+}
+
+.logo:last-child {
+  height: 25px; /* 0xy Labs logo slightly smaller */
+  filter: brightness(1.4); /* Extra brightness for SVG */
+}
+
+/* Add padding to body to account for fixed header */
+body {
+  padding-top: 80px;
+  background-color: #1a1a1a;
+  color: #e0e0e0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  line-height: 1.6;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+h1, h2, h3, h4, h5 {
+  color: #fff;
+  margin-top: 2rem;
+}
+
+h1 { font-size: 2.5rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.75rem; }
+h4 { font-size: 1.5rem; }
+h5 { font-size: 1.25rem; }
+
+ul, ol {
+  padding-left: 2rem;
+}
+
+pre {
+  background-color: #2d2d2d;
+  padding: 1rem;
+  border-radius: 8px;
+  overflow-x: auto;
+}
+
+code {
+  font-family: 'Fira Code', 'Courier New', Courier, monospace;
+  color: #89ddff;
+}
+
+img:not(.logo) {
+  max-width: 400px !important;
+  width: 100%;
+  display: block;
+  margin: 2rem auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+strong {
+  color: #89ddff;
+}
+
+p {
+  margin: 1rem 0;
+}
+</style>
+
+<div class="top-bar">
+  <div class="logo-container">
+    <img src="lazyindie-logo.avif" alt="LazyIndie Logo" class="logo">
+    <img src="0xyLabsColorSVG1.svg" alt="0xy Labs Logo" class="logo">
+  </div>
+</div>
+
+<h1>LazyIndie Agent Swarm: Implementation Guide</h1>
+<h2>1. Introduction</h2>
+<h3>Purpose and Scope</h3>
+<p>This document details how the NetGenome agent swarm system creates, identifies, and executes opportunities for LazyIndie artists. It covers the complete workflow from user onboarding through successful execution of key music industry activities.</p>
+<h3>How to Use This Document</h3>
+<ul>
+<li>Each section builds on previous concepts</li>
+<li>Technical details include concrete implementation examples</li>
+<li>Use cases demonstrate complete workflows</li>
+<li>Code samples show exact data structures and formats</li>
+<li>Resource planning sections detail both automated and human components</li>
+</ul>
+<h2>2. System Architecture</h2>
+<h3>Agent Swarm Overview</h3>
+<p><img src="systemArchitecture.svg" alt="System Architecture" style="max-width: 400px; width: 100%;"></p>
+<p>The system uses four specialized AI agents working as a coordinated team:</p>
+<ol>
+<li><p><strong>Classification Agent</strong>: The &quot;analyzer&quot;</p>
+<ul>
+<li>Primary Role: Understanding and categorizing information</li>
+<li>Key Tasks: Profile analysis, content evaluation, quality assessment</li>
+<li>Works With: Raw data, user inputs, media content</li>
+</ul>
+</li>
+<li><p><strong>Discovery Agent</strong>: The &quot;matchmaker&quot;</p>
+<ul>
+<li>Primary Role: Finding valuable opportunities</li>
+<li>Key Tasks: Pattern matching, compatibility scoring, opportunity ranking</li>
+<li>Works With: User profiles, market data, engagement signals</li>
+</ul>
+</li>
+<li><p><strong>Planning Agent</strong>: The &quot;strategist&quot;</p>
+<ul>
+<li>Primary Role: Creating actionable plans that combine automated and human resources</li>
+<li>Key Tasks: <ul>
+<li>Timeline creation and resource allocation</li>
+<li>Integration platform selection and configuration</li>
+<li>Human resource identification and scheduling</li>
+<li>Milestone setting and coordination planning</li>
+</ul>
+</li>
+<li>Works With: <ul>
+<li>Opportunities and constraints</li>
+<li>Integration platforms and APIs</li>
+<li>Phonebook system for human resource matching</li>
+<li>Task delegation and coordination templates</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>Execution Agent</strong>: The &quot;implementer&quot;</p>
+<ul>
+<li>Primary Role: Making things happen through two distinct channels:<ul>
+<li>Automated Integrations: Direct API connections to platforms</li>
+<li>Human Network: Coordinated delegation through phonebook system</li>
+</ul>
+</li>
+<li>Key Tasks: <ul>
+<li>Integration management (email campaigns, social media, analytics)</li>
+<li>Human coordination (event management, creative direction, PR)</li>
+</ul>
+</li>
+<li>Works With: <ul>
+<li>Integration APIs and webhooks</li>
+<li>Professional network contacts via WhatsApp</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h3>Core Building Blocks</h3>
+<ol>
+<li><p><strong>MVP Modules</strong></p>
+<ul>
+<li>Personal Profile Creation: User understanding and presentation</li>
+<li>Interest Profile Creation: Matching and connections</li>
+<li>Artist Engagement: Professional growth facilitation</li>
+<li>Fan Engagement: Community building and monetization</li>
+<li>Sponsor/Advertiser: Promotional opportunity management</li>
+</ul>
+</li>
+<li><p><strong>Technical Tools (Eliza Plugins)</strong></p>
+<ul>
+<li>MongoDB Plugin: Structured data management</li>
+<li>WhatsApp/Telegram Plugins: Direct communication</li>
+<li>Web Search Plugin: External information gathering</li>
+<li>Email Plugin: Professional correspondence</li>
+<li>YouTube to Text Plugin: Media content processing</li>
+</ul>
+</li>
+</ol>
+<h3>Execution Framework</h3>
+<ol>
+<li><p><strong>Automated Integration Layer</strong></p>
+<ul>
+<li>Direct Platform Connections:<ul>
+<li>Email (Mailchimp, SendGrid)</li>
+<li>Social Media (Buffer, Hootsuite)</li>
+<li>Event Management (EventBrite)</li>
+<li>Music Distribution (DistroKid)</li>
+</ul>
+</li>
+<li>Integration Capabilities:<ul>
+<li>Scheduled operations</li>
+<li>Automated workflows</li>
+<li>Analytics tracking</li>
+<li>Error handling</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>Human Network Layer</strong></p>
+<ul>
+<li>Professional Directory:<ul>
+<li>Roles: Event managers, PR coordinators, technical directors</li>
+<li>Skills: Production, promotion, coordination</li>
+<li>Contact Methods: Primarily WhatsApp</li>
+<li>Availability Patterns: Time zones, working hours</li>
+</ul>
+</li>
+<li>Delegation System:<ul>
+<li>Task assignment</li>
+<li>Progress tracking</li>
+<li>Quality monitoring</li>
+<li>Performance history</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h2>3. The Phonebook System</h2>
+<h3>Network Structure</h3>
+<pre><code class="language-json">{
+  &quot;contact&quot;: {
+    &quot;profile&quot;: {
+      &quot;id&quot;: &quot;unique_identifier&quot;,
+      &quot;name&quot;: &quot;string&quot;,
+      &quot;primary_role&quot;: &quot;role_type&quot;,
+      &quot;secondary_roles&quot;: [&quot;role_type&quot;],
+      &quot;skills&quot;: [&quot;skill_tags&quot;],
+      &quot;location&quot;: {
+        &quot;city&quot;: &quot;string&quot;,
+        &quot;timezone&quot;: &quot;string&quot;
+      }
+    },
+    &quot;communication&quot;: {
+      &quot;primary_channel&quot;: &quot;whatsapp&quot;,
+      &quot;contact_info&quot;: &quot;encrypted_details&quot;,
+      &quot;preferred_hours&quot;: [&quot;time_ranges&quot;],
+      &quot;response_sla&quot;: &quot;duration&quot;
+    },
+    &quot;metrics&quot;: {
+      &quot;reliability_score&quot;: &quot;float&quot;,
+      &quot;expertise_level&quot;: &quot;float&quot;,
+      &quot;average_response_time&quot;: &quot;duration&quot;,
+      &quot;successful_tasks&quot;: &quot;integer&quot;
+    }
+  }
+}
+</code></pre>
+<h3>Role Categories</h3>
+<ol>
+<li><p><strong>Event Operations</strong></p>
+<ul>
+<li>Event Managers</li>
+<li>Stage Managers</li>
+<li>Technical Directors</li>
+</ul>
+</li>
+<li><p><strong>Creative Direction</strong></p>
+<ul>
+<li>Music Coordinators</li>
+<li>Creative Directors</li>
+<li>Quality Assessors</li>
+</ul>
+</li>
+<li><p><strong>Media Relations</strong></p>
+<ul>
+<li>PR Coordinators</li>
+<li>Media Liaisons</li>
+<li>Interview Coordinators</li>
+</ul>
+</li>
+<li><p><strong>Technical Support</strong></p>
+<ul>
+<li>Sound Engineers</li>
+<li>Recording Specialists</li>
+<li>Equipment Managers</li>
+</ul>
+</li>
+</ol>
+<h3>Delegation Process</h3>
+<ol>
+<li><p><strong>Task Assessment</strong></p>
+<ul>
+<li>Complexity evaluation</li>
+<li>Skill requirements</li>
+<li>Timeline constraints</li>
+</ul>
+</li>
+<li><p><strong>Contact Selection</strong></p>
+<ul>
+<li>Role matching</li>
+<li>Availability checking</li>
+<li>Performance history</li>
+</ul>
+</li>
+<li><p><strong>Assignment Flow</strong></p>
+<ul>
+<li>Task briefing</li>
+<li>Resource provision</li>
+<li>Timeline setting</li>
+</ul>
+</li>
+<li><p><strong>Monitoring</strong></p>
+<ul>
+<li>Progress tracking</li>
+<li>Quality assessment</li>
+<li>Feedback collection</li>
+</ul>
+</li>
+</ol>
+<h3>Quality Control</h3>
+<ol>
+<li><p><strong>Performance Metrics</strong></p>
+<ul>
+<li>Response times</li>
+<li>Completion rates</li>
+<li>Client satisfaction</li>
+</ul>
+</li>
+<li><p><strong>Ranking System</strong></p>
+<ul>
+<li>Expertise levels</li>
+<li>Reliability scores</li>
+<li>Specialization tags</li>
+</ul>
+</li>
+<li><p><strong>Feedback Loop</strong></p>
+<ul>
+<li>Task reviews</li>
+<li>Improvement tracking</li>
+<li>Network optimization</li>
+</ul>
+</li>
+</ol>
+<h2>4. User Journey Flows</h2>
+<h3>Producer-Artist Collaboration Match</h3>
+<h4>Platform Onboarding</h4>
+<h5>Producer Sign-up Form</h5>
+<pre><code class="language-json">{
+  &quot;basic_info&quot;: {
+    &quot;name&quot;: &quot;string&quot;,
+    &quot;email&quot;: &quot;email&quot;,
+    &quot;phone&quot;: &quot;whatsapp_number&quot;,
+    &quot;location&quot;: &quot;string&quot;
+  },
+  &quot;professional_profile&quot;: {
+    &quot;producer_name&quot;: &quot;string&quot;,
+    &quot;years_experience&quot;: &quot;number&quot;,
+    &quot;primary_genres&quot;: [&quot;array_of_genres&quot;],
+    &quot;production_style&quot;: [&quot;array_of_styles&quot;]
+  },
+  &quot;technical_setup&quot;: {
+    &quot;daw_software&quot;: [&quot;array_of_daws&quot;],
+    &quot;studio_type&quot;: &quot;home_studio | professional_studio&quot;,
+    &quot;equipment&quot;: [&quot;array_of_equipment&quot;]
+  },
+  &quot;portfolio&quot;: {
+    &quot;soundcloud_url&quot;: &quot;optional_url&quot;,
+    &quot;spotify_credits&quot;: [&quot;optional_array&quot;],
+    &quot;youtube_channel&quot;: &quot;optional_url&quot;,
+    &quot;instagram&quot;: &quot;optional_url&quot;
+  },
+  &quot;collaboration_preferences&quot;: {
+    &quot;artist_level&quot;: [&quot;beginner&quot;, &quot;intermediate&quot;, &quot;professional&quot;],
+    &quot;preferred_genres&quot;: [&quot;array_of_genres&quot;],
+    &quot;working_style&quot;: [&quot;remote&quot;, &quot;in_person&quot;, &quot;both&quot;],
+    &quot;rate_range&quot;: {
+      &quot;min&quot;: &quot;number&quot;,
+      &quot;max&quot;: &quot;number&quot;,
+      &quot;currency&quot;: &quot;string&quot;
+    }
+  }
+}
+</code></pre>
+<h5>Trigger Post Template</h5>
+<pre><code class="language-json">{
+  &quot;post_type&quot;: &quot;producer_availability&quot;,
+  &quot;content&quot;: {
+    &quot;title&quot;: &quot;Hip-hop Producer Available for Collabs&quot;,
+    &quot;body&quot;: &quot;Looking for ambitious artists in the Mumbai hip-hop scene. Specializing in trap/drill beats with melodic elements. Recent credits include work with @artist1 and @artist2. Check my latest beat pack in bio. Open for both commercial and creative collaborations.&quot;,
+    &quot;tags&quot;: [&quot;#producer&quot;, &quot;#hiphop&quot;, &quot;#mumbaihiphop&quot;, &quot;#trapbeats&quot;],
+    &quot;media&quot;: {
+      &quot;type&quot;: &quot;audio_preview&quot;,
+      &quot;duration&quot;: &quot;60s&quot;,
+      &quot;source&quot;: &quot;latest_beat_pack_preview&quot;
+    }
+  },
+  &quot;availability&quot;: {
+    &quot;start_date&quot;: &quot;2025-04-01&quot;,
+    &quot;slots_per_week&quot;: 3,
+    &quot;preferred_schedule&quot;: &quot;evenings_weekends&quot;
+  }
+}
+</code></pre>
+<h4>Processing Flow</h4>
+<p><img src="producerCollab.svg" alt="Producer Collaboration Flow" style="max-width: 400px; width: 100%;"></p>
+<ol>
+<li><p><strong>Classification Phase</strong></p>
+<ul>
+<li><p>Profile Generation</p>
+<ul>
+<li>Web Search Plugin: Crawl and index online presence</li>
+<li>YouTube to Text Plugin: Process media content</li>
+<li>MongoDB Plugin: Create structured profile</li>
+</ul>
+</li>
+<li><p>Profile Enhancement</p>
+<ul>
+<li>Image Plugin: Process and optimize media</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>Discovery Phase</strong></p>
+<ul>
+<li>Interest Profiling<ul>
+<li>MongoDB Plugin: Create interest categories</li>
+<li>WhatsApp Plugin: Analyze communication patterns</li>
+<li>MongoDB Plugin: Match compatible profiles</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>Planning Phase</strong></p>
+<ul>
+<li><p>Automated Resource Planning</p>
+<ul>
+<li>MongoDB Plugin: Create engagement plan<pre><code class="language-json">{
+  &quot;automation_flow&quot;: {
+    &quot;email_campaign&quot;: {
+      &quot;platform&quot;: &quot;mailchimp&quot;,
+      &quot;templates&quot;: [&quot;intro&quot;, &quot;follow_up&quot;, &quot;docs&quot;],
+      &quot;timing&quot;: &quot;sequence_based&quot;
+    },
+    &quot;document_sharing&quot;: {
+      &quot;platform&quot;: &quot;drive&quot;,
+      &quot;access_levels&quot;: [&quot;view&quot;, &quot;comment&quot;]
+    }
+  }
+}
+</code></pre>
+</li>
+</ul>
+</li>
+<li><p>Human Resource Planning</p>
+<ul>
+<li>MongoDB Plugin: Query phonebook system<pre><code class="language-json">{
+  &quot;required_roles&quot;: {
+    &quot;primary&quot;: {
+      &quot;role&quot;: &quot;music_coordinator&quot;,
+      &quot;skills&quot;: [&quot;session_management&quot;, &quot;creative_direction&quot;],
+      &quot;availability&quot;: &quot;flexible_hours&quot;,
+      &quot;location&quot;: &quot;mumbai&quot;
+    },
+    &quot;support&quot;: {
+      &quot;role&quot;: &quot;studio_manager&quot;,
+      &quot;skills&quot;: [&quot;recording&quot;, &quot;equipment_setup&quot;],
+      &quot;availability&quot;: &quot;session_based&quot;
+    }
+  },
+  &quot;delegation_flow&quot;: {
+    &quot;briefing_template&quot;: &quot;producer_collab_brief&quot;,
+    &quot;communication_channel&quot;: &quot;whatsapp&quot;,
+    &quot;escalation_path&quot;: [&quot;backup_coordinator&quot;, &quot;supervisor&quot;]
+  }
+}
+</code></pre>
+</li>
+</ul>
+</li>
+<li><p>Coordination Strategy</p>
+<ul>
+<li>WhatsApp Plugin: Generate approach sequence</li>
+<li>MongoDB Plugin: Create milestone tracking</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>Execution Phase</strong></p>
+<p><em>Automated Actions:</em></p>
+<ul>
+<li><p>Email Campaign Management (Mailchimp)</p>
+<ul>
+<li>Initial outreach sequence</li>
+<li>Follow-ups</li>
+<li>Document sharing</li>
+<li>Calendar scheduling</li>
+</ul>
+</li>
+<li><p>Progress Tracking (MongoDB)</p>
+<ul>
+<li>Response rates</li>
+<li>Milestone completion</li>
+<li>Document status</li>
+</ul>
+</li>
+</ul>
+<p><em>Human Actions:</em></p>
+<ul>
+<li><p>Creative Direction (Music Coordinator)</p>
+<ul>
+<li>Session facilitation</li>
+<li>Creative feedback</li>
+<li>Quality assessment</li>
+<li>Conflict resolution</li>
+</ul>
+</li>
+<li><p>Technical Coordination (Studio Manager)</p>
+<ul>
+<li>Equipment setup</li>
+<li>Recording oversight</li>
+<li>Mix review coordination</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h3>Live Performance Opportunity</h3>
+<h4>Platform Onboarding</h4>
+<h5>Venue Sign-up Form</h5>
+<pre><code class="language-json">{
+  &quot;venue_details&quot;: {
+    &quot;name&quot;: &quot;string&quot;,
+    &quot;address&quot;: {
+      &quot;street&quot;: &quot;string&quot;,
+      &quot;city&quot;: &quot;string&quot;,
+      &quot;state&quot;: &quot;string&quot;,
+      &quot;postal_code&quot;: &quot;string&quot;
+    },
+    &quot;contact&quot;: {
+      &quot;primary_name&quot;: &quot;string&quot;,
+      &quot;position&quot;: &quot;string&quot;,
+      &quot;email&quot;: &quot;email&quot;,
+      &quot;phone&quot;: &quot;whatsapp_number&quot;
+    }
+  },
+  &quot;venue_specifications&quot;: {
+    &quot;capacity&quot;: &quot;number&quot;,
+    &quot;venue_type&quot;: [&quot;live_music&quot;, &quot;club&quot;, &quot;bar&quot;, &quot;theater&quot;],
+    &quot;stage_dimensions&quot;: {
+      &quot;width&quot;: &quot;number&quot;,
+      &quot;depth&quot;: &quot;number&quot;,
+      &quot;height&quot;: &quot;number&quot;
+    },
+    &quot;sound_system&quot;: {
+      &quot;pa_system&quot;: &quot;string&quot;,
+      &quot;monitoring&quot;: &quot;string&quot;,
+      &quot;mixer&quot;: &quot;string&quot;
+    }
+  },
+  &quot;booking_preferences&quot;: {
+    &quot;genres&quot;: [&quot;array_of_genres&quot;],
+    &quot;typical_slot_duration&quot;: &quot;number_minutes&quot;,
+    &quot;slots_per_night&quot;: &quot;number&quot;,
+    &quot;payment_models&quot;: [&quot;fixed&quot;, &quot;door_split&quot;, &quot;minimum_guarantee&quot;],
+    &quot;booking_advance&quot;: &quot;number_days&quot;
+  },
+  &quot;media&quot;: {
+    &quot;venue_photos&quot;: [&quot;array_of_urls&quot;],
+    &quot;stage_photos&quot;: [&quot;array_of_urls&quot;],
+    &quot;previous_events&quot;: [&quot;array_of_urls&quot;]
+  }
+}
+</code></pre>
+<h5>Trigger Post Template</h5>
+<pre><code class="language-json">{
+  &quot;post_type&quot;: &quot;venue_opportunity&quot;,
+  &quot;content&quot;: {
+    &quot;title&quot;: &quot;Opening Act Needed - Album Launch Event&quot;,
+    &quot;body&quot;: &quot;Seeking an indie rock opening act for @headliner&#39;s album launch on April 15th. 45-minute slot available. Professional sound system and engineer provided. Looking for acts with original material and existing following in Mumbai. Great exposure opportunity with industry presence expected.&quot;,
+    &quot;requirements&quot;: [
+      &quot;Original material&quot;,
+      &quot;45-min set ready&quot;,
+      &quot;Professional equipment&quot;,
+      &quot;EPK required&quot;
+    ],
+    &quot;tags&quot;: [&quot;#livemusic&quot;, &quot;#mumbaimusic&quot;, &quot;#indierock&quot;, &quot;#gigopportunity&quot;]
+  },
+  &quot;event_details&quot;: {
+    &quot;date&quot;: &quot;2025-04-15&quot;,
+    &quot;slot_time&quot;: &quot;7:30 PM&quot;,
+    &quot;sound_check&quot;: &quot;4:00 PM&quot;,
+    &quot;compensation&quot;: {
+      &quot;type&quot;: &quot;fixed&quot;,
+      &quot;amount&quot;: 15000,
+      &quot;currency&quot;: &quot;INR&quot;
+    }
+  }
+}
+</code></pre>
+<h4>Processing Flow</h4>
+<p><img src="livePerformance.svg" alt="Live Performance Flow" style="max-width: 400px; width: 100%;"></p>
+<ol>
+<li><p><strong>Classification Phase</strong></p>
+<ul>
+<li><p>Venue Profile Creation</p>
+<ul>
+<li>Web Search Plugin: Gather venue information</li>
+<li>MongoDB Plugin: Create venue profile</li>
+</ul>
+</li>
+<li><p>Requirements Definition</p>
+<ul>
+<li>MongoDB Plugin: Create event profile</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>Discovery Phase</strong></p>
+<ul>
+<li><p>Opportunity Matching</p>
+<ul>
+<li>MongoDB Plugin: Create matching profile</li>
+</ul>
+</li>
+<li><p>Artist Evaluation</p>
+<ul>
+<li>Web Search Plugin: Aggregate metrics</li>
+<li>MongoDB Plugin: Score artist fit</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>Planning Phase</strong></p>
+<ul>
+<li><p>Automated Resource Planning</p>
+<ul>
+<li>MongoDB Plugin: Create event plan<pre><code class="language-json">{
+  &quot;automation_flow&quot;: {
+    &quot;ticketing&quot;: {
+      &quot;platform&quot;: &quot;eventbrite&quot;,
+      &quot;setup&quot;: [&quot;general&quot;, &quot;vip&quot;, &quot;backstage&quot;],
+      &quot;timing&quot;: &quot;scheduled_release&quot;
+    },
+    &quot;marketing&quot;: {
+      &quot;platform&quot;: &quot;buffer&quot;,
+      &quot;content_types&quot;: [&quot;announcement&quot;, &quot;reminder&quot;, &quot;live&quot;],
+      &quot;channels&quot;: [&quot;instagram&quot;, &quot;facebook&quot;, &quot;twitter&quot;]
+    }
+  }
+}
+</code></pre>
+</li>
+</ul>
+</li>
+<li><p>Human Resource Planning</p>
+<ul>
+<li>MongoDB Plugin: Query phonebook system<pre><code class="language-json">{
+  &quot;required_roles&quot;: {
+    &quot;primary&quot;: {
+      &quot;role&quot;: &quot;event_manager&quot;,
+      &quot;skills&quot;: [&quot;live_production&quot;, &quot;artist_management&quot;],
+      &quot;availability&quot;: &quot;event_day&quot;,
+      &quot;location&quot;: &quot;venue_city&quot;
+    },
+    &quot;support&quot;: {
+      &quot;role&quot;: &quot;stage_manager&quot;,
+      &quot;skills&quot;: [&quot;technical_coordination&quot;, &quot;live_sound&quot;],
+      &quot;availability&quot;: &quot;setup_and_event&quot;
+    }
+  },
+  &quot;delegation_flow&quot;: {
+    &quot;briefing_template&quot;: &quot;live_event_brief&quot;,
+    &quot;communication_channel&quot;: &quot;whatsapp&quot;,
+    &quot;escalation_path&quot;: [&quot;backup_manager&quot;, &quot;venue_owner&quot;]
+  }
+}
+</code></pre>
+</li>
+</ul>
+</li>
+<li><p>Communication Planning</p>
+<ul>
+<li>Email Plugin: Create communication plan</li>
+<li>MongoDB Plugin: Create task assignment flow</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>Execution Phase</strong></p>
+<p><em>Automated Actions:</em></p>
+<ul>
+<li><p>Event Management (EventBrite)</p>
+<ul>
+<li>Ticket setup and sales</li>
+<li>Attendee communications</li>
+<li>Digital ticket delivery</li>
+<li>Post-event surveys</li>
+</ul>
+</li>
+<li><p>Marketing Automation (Buffer)</p>
+<ul>
+<li>Social announcements</li>
+<li>Content distribution</li>
+<li>Engagement monitoring</li>
+<li>Analytics collection</li>
+</ul>
+</li>
+</ul>
+<p><em>Human Actions:</em></p>
+<ul>
+<li><p>Venue Operations (Event Manager)</p>
+<ul>
+<li>Technical setup coordination</li>
+<li>Sound check management</li>
+<li>Stage management</li>
+<li>Emergency handling</li>
+</ul>
+</li>
+<li><p>Performance Support (Stage Manager)</p>
+<ul>
+<li>Artist coordination</li>
+<li>Equipment verification</li>
+<li>Schedule management</li>
+<li>Live troubleshooting</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h3>Music Release Campaign</h3>
+<h4>Platform Onboarding</h4>
+<h5>Artist Release Submission Form</h5>
+<pre><code class="language-json">{
+  &quot;artist_info&quot;: {
+    &quot;name&quot;: &quot;string&quot;,
+    &quot;email&quot;: &quot;email&quot;,
+    &quot;phone&quot;: &quot;whatsapp_number&quot;,
+    &quot;social_media&quot;: {
+      &quot;instagram&quot;: &quot;url&quot;,
+      &quot;spotify&quot;: &quot;url&quot;,
+      &quot;youtube&quot;: &quot;url&quot;
+    }
+  },
+  &quot;release_details&quot;: {
+    &quot;title&quot;: &quot;string&quot;,
+    &quot;type&quot;: [&quot;single&quot;, &quot;ep&quot;, &quot;album&quot;],
+    &quot;genre&quot;: [&quot;array_of_genres&quot;],
+    &quot;language&quot;: [&quot;array_of_languages&quot;],
+    &quot;track_count&quot;: &quot;number&quot;,
+    &quot;release_date&quot;: &quot;date&quot;,
+    &quot;distribution_status&quot;: [&quot;not_started&quot;, &quot;in_progress&quot;, &quot;distributed&quot;]
+  },
+  &quot;assets&quot;: {
+    &quot;audio&quot;: {
+      &quot;master_wav&quot;: &quot;file_url&quot;,
+      &quot;preview_mp3&quot;: &quot;file_url&quot;
+    },
+    &quot;artwork&quot;: {
+      &quot;cover_art&quot;: &quot;file_url&quot;,
+      &quot;artist_photos&quot;: [&quot;array_of_urls&quot;]
+    },
+    &quot;documentation&quot;: {
+      &quot;lyrics&quot;: &quot;file_url&quot;,
+      &quot;credits&quot;: &quot;file_url&quot;,
+      &quot;press_release&quot;: &quot;file_url&quot;
+    }
+  },
+  &quot;campaign_preferences&quot;: {
+    &quot;budget_range&quot;: {
+      &quot;min&quot;: &quot;number&quot;,
+      &quot;max&quot;: &quot;number&quot;,
+      &quot;currency&quot;: &quot;string&quot;
+    },
+    &quot;priority_platforms&quot;: [&quot;array_of_platforms&quot;],
+    &quot;target_markets&quot;: [&quot;array_of_regions&quot;],
+    &quot;marketing_goals&quot;: [&quot;array_of_goals&quot;]
+  }
+}
+</code></pre>
+<h5>Trigger Post Template</h5>
+<pre><code class="language-json">{
+  &quot;post_type&quot;: &quot;release_announcement&quot;,
+  &quot;content&quot;: {
+    &quot;title&quot;: &quot;New Single &#39;Dream Sequence&#39; Dropping Next Month&quot;,
+    &quot;body&quot;: &quot;Excited to announce my latest single &#39;Dream Sequence&#39; - a blend of electronic pop with classical Indian elements. This is the first single from my upcoming EP. Looking to build a strong release campaign. The track features @collaborator1 on tabla and @collaborator2 on synths. Would love to connect with playlist curators and blogs in the alternative electronic space.&quot;,
+    &quot;tags&quot;: [&quot;#newmusic&quot;, &quot;#electronicmusic&quot;, &quot;#indianfusion&quot;, &quot;#newrelease&quot;],
+    &quot;media&quot;: {
+      &quot;type&quot;: &quot;audio_teaser&quot;,
+      &quot;duration&quot;: &quot;30s&quot;,
+      &quot;source&quot;: &quot;track_preview&quot;
+    }
+  },
+  &quot;release_timeline&quot;: {
+    &quot;announcement_date&quot;: &quot;2025-03-19&quot;,
+    &quot;pre_save_date&quot;: &quot;2025-03-25&quot;,
+    &quot;release_date&quot;: &quot;2025-04-10&quot;
+  }
+}
+</code></pre>
+<h4>Processing Flow</h4>
+<p><img src="releaseCampaign.svg" alt="Release Campaign Flow" style="max-width: 400px; width: 100%;"></p>
+<ol>
+<li><p><strong>Classification Phase</strong></p>
+<ul>
+<li>Release Analysis<ul>
+<li>YouTube to Text Plugin: Process release content</li>
+<li>MongoDB Plugin: Create release profile</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>Discovery Phase</strong></p>
+<ul>
+<li><p>Audience Mapping</p>
+<ul>
+<li>MongoDB Plugin: Create target profile</li>
+</ul>
+</li>
+<li><p>Promotion Channels</p>
+<ul>
+<li>Web Search Plugin: Map promotion network</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>Planning Phase</strong></p>
+<ul>
+<li><p>Automated Resource Planning</p>
+<ul>
+<li>MongoDB Plugin: Create promotion plan<pre><code class="language-json">{
+  &quot;automation_flow&quot;: {
+    &quot;distribution&quot;: {
+      &quot;platform&quot;: &quot;distrokid&quot;,
+      &quot;stores&quot;: [&quot;spotify&quot;, &quot;apple&quot;, &quot;amazon&quot;],
+      &quot;timing&quot;: &quot;scheduled_release&quot;
+    },
+    &quot;marketing&quot;: {
+      &quot;email&quot;: {
+        &quot;platform&quot;: &quot;mailchimp&quot;,
+        &quot;sequences&quot;: [&quot;pre_save&quot;, &quot;release_day&quot;, &quot;follow_up&quot;]
+      },
+      &quot;social&quot;: {
+        &quot;platform&quot;: &quot;buffer&quot;,
+        &quot;content_calendar&quot;: &quot;release_timeline&quot;
+      }
+    }
+  }
+}
+</code></pre>
+</li>
+</ul>
+</li>
+<li><p>Human Resource Planning</p>
+<ul>
+<li>MongoDB Plugin: Query phonebook system<pre><code class="language-json">{
+  &quot;required_roles&quot;: {
+    &quot;primary&quot;: {
+      &quot;role&quot;: &quot;pr_coordinator&quot;,
+      &quot;skills&quot;: [&quot;media_relations&quot;, &quot;story_placement&quot;],
+      &quot;availability&quot;: &quot;campaign_duration&quot;,
+      &quot;location&quot;: &quot;target_market&quot;
+    },
+    &quot;support&quot;: {
+      &quot;role&quot;: &quot;event_producer&quot;,
+      &quot;skills&quot;: [&quot;release_party&quot;, &quot;media_coordination&quot;],
+      &quot;availability&quot;: &quot;event_focused&quot;
+    }
+  },
+  &quot;delegation_flow&quot;: {
+    &quot;briefing_template&quot;: &quot;release_campaign_brief&quot;,
+    &quot;communication_channel&quot;: &quot;whatsapp&quot;,
+    &quot;escalation_path&quot;: [&quot;backup_pr&quot;, &quot;campaign_manager&quot;]
+  }
+}
+</code></pre>
+</li>
+</ul>
+</li>
+<li><p>Engagement Strategy</p>
+<ul>
+<li>Email Plugin: Create engagement sequence</li>
+<li>MongoDB Plugin: Create coverage tracking flow</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>Execution Phase</strong></p>
+<p><em>Automated Actions:</em></p>
+<ul>
+<li><p>Release Distribution (DistroKid)</p>
+<ul>
+<li>Track upload and metadata</li>
+<li>Store distribution</li>
+<li>Revenue tracking</li>
+<li>Analytics collection</li>
+</ul>
+</li>
+<li><p>Marketing Automation (Mailchimp + Buffer)</p>
+<ul>
+<li>Fan email sequences</li>
+<li>Social media scheduling</li>
+<li>Content distribution</li>
+<li>Engagement tracking</li>
+</ul>
+</li>
+</ul>
+<p><em>Human Actions:</em></p>
+<ul>
+<li><p>Press Relations (PR Coordinator)</p>
+<ul>
+<li>Media outreach</li>
+<li>Interview coordination</li>
+<li>Story placement</li>
+<li>Coverage tracking</li>
+</ul>
+</li>
+<li><p>Release Event (Event Producer)</p>
+<ul>
+<li>Venue coordination</li>
+<li>Guest list management</li>
+<li>VIP handling</li>
+<li>Live social coverage</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
